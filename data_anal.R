@@ -135,8 +135,7 @@ fig4b.add <- fig4b%>%
   dplyr::select(`Male-Female`,Difference)
 
 fig4b.plot <- 
-  ggplot(fig4b.1, aes(x=par_pctile, y = round(100*value,0), group = sex)) +
-  geom_line(aes(color=sex)) +
+  ggplot(fig4b.1, aes(x=par_pctile, y = round(100*value,2), group = sex)) +
   geom_point(aes(color=sex, shape=sex)) +
   theme_bw() +
   xlab("Parent Household Income Percentile") +
@@ -157,121 +156,115 @@ dev.off()
 #national level data
 college <- gender_nat%>%
   dplyr::select(par_pctile,coll1823_m,coll1823_f)%>%
-  dplyr::mutate(gap = 100*(coll1823_f - coll1823_m))
+  dplyr::mutate(gap = 100*(coll1823_m-coll1823_f),
+                coll_f = 100*coll1823_f,
+                coll_m = 100*coll1823_m,
+                par_pctile2 = par_pctile^2)
 
-qq <- ggplot(college, aes(sample=gap))
-qq + stat_qq() + stat_qq_line()
-
-#gap.dist <- 
-    ggplot(college, aes(x=par_pctile, y = gap)) +
-    geom_point() #+
-    
-    xlab("College Attendence Rates") +
-    ylab("Frequency") +
-    theme_bw()
-
-m.col <- lm(gap~par_pctile, college)
-summary(m.col)
-
-m.col <- data_frame(yfit = m.col$fitted.values, res = m.col$residuals)
-    #m.col.fit.plot <- 
-      ggplot(m.col.fit, aes(x=yfit, y=res)) +
-      geom_point() +
-      theme_bw() +
-      ylab("Residuals") +
-      xlab("Fitted Values")
-
-# college1 <- college%>%
-#   tidyr::gather("var","value",2:3)%>%
-#   dplyr::mutate(Gender = ifelse(grepl('m',var),"M","F"),
-#                 value = value*100)%>%
-#   dplyr::select(-var)%>%
-#   dplyr::mutate(par_pctile2 = par_pctile^2)
-# 
-# colrates.dist <- 
-#   ggplot(college1, aes(x=value,fill=Gender, color=Gender)) +
-#   geom_histogram(position="identity", alpha=0.5,binwidth=10) +
-#   xlab("College Attendence Rates") +
-#   ylab("Frequency") +
-#   theme_bw() +
-#   theme(legend.position="bottom") 
-#   
-# pdf("college_rates_dist_bygender.pdf")
-# colrates.dist
-# dev.off()
-# 
-    college1%>%
-      dplyr::group_by(Gender)%>%
-      dplyr::mutate(value1 = fs(value,epsilon = 0,0.001))%>%
-      ggplot(aes(sample=value1,colour=Gender)) + 
-      stat_qq() + 
-      stat_qq_line() + 
-      facet_wrap(~Gender,scales='free')
-
-
-        
-#ggplot(college, aes(sample=coll1823_m)) + stat_qq() + stat_qq_line()
-
-m.col <- lm(value~Gender + Gender:par_pctile, college1)
-summary(m.col)
-
-m.col.fit <- data_frame(yfit = m.col$fitted.values, res = m.col$residuals)
-#m.col.fit.plot <- 
-  ggplot(m.col.fit, aes(x=yfit, y=res)) +
+#Regression model for girls
+fit_coll_f <- lm(coll_f ~ par_pctile, college)
+fit_coll_f.plot <- fit_coll_f%>%
+  broom::augment()%>%
+  ggplot(aes(x=.fitted, y=.resid)) +
   geom_point() +
-  theme_bw() +
+  geom_hline(aes(yintercept=0),linetype=2)+
+  theme_bw()+
   ylab("Residuals") +
   xlab("Fitted Values")
 
-# pdf("college_rates_model1_fit.pdf")
-# m.col.fit.plot
-# dev.off()
+pdf("college_rates_model1_f.pdf")
+fit_coll_f.plot 
+dev.off()
 
-m1 <- lm_robust(value ~ Gender + Gender:par_pctile, 
-              data = college1, 
-              clusters = par_pctile, 
-              se_type = "stata")
-summary(m1)
-
-fitted(m1)
-m1.fit <- data_frame(yfit = fitted(m1), res = college1$value-fitted(m1))
-ggplot(m1.fit, aes(x=yfit, y=res)) +
-  geom_point() 
-#+
-#  scale_y_continuous(limits = c(-0.1,0.1))
-
-
-m.col1 <- lm(value ~ log(par_pctile) +log(par_pctile2)+ 
-               Gender + Gender*log(par_pctile), college1)
-summary(m.col1)
-
-m.col1.fit <- data_frame(yfit = m.col1$fitted.values, res = m.col1$residuals)
-ggplot(m.col1.fit, aes(x=yfit, y=res)) +
+#Regression model for boys
+fit_coll_m <- lm(coll_m ~ par_pctile, college)
+fit_coll_m.plot <- fit_coll_m%>%
+  broom::augment()%>%
+  ggplot(aes(x=.fitted, y=.resid)) +
   geom_point() +
-  scale_y_continuous(limits = c(-0.1,0.1))
+  geom_hline(aes(yintercept=0),linetype=2)+
+  theme_bw()+
+  ylab("Residuals") +
+  xlab("Fitted Values")
+
+pdf("college_rates_model1_m.pdf")
+fit_coll_m.plot 
+dev.off()
+
+#Plot gap
+col_gap_PHIP <- college%>%
+  ggplot(aes(x=par_pctile, y=gap)) +
+  geom_point() +
+  theme_bw() +
+  xlab("Parent Household Income Percentile") +
+  ylab("Percent Attended College (M-F)")
+
+pdf("college_gap.pdf")
+col_gap_PHIP
+dev.off()
 
 
-m.col.m <- lm(coll1823_m~par_pctile + I(par_pctile^2) , college)
-summary(m.col.m)
+#Regression model for gap wihtout quadratic term
+fit_coll_gap1 <- lm(gap ~ par_pctile, college)
+fit_coll_gap1.plot <- 
+fit_coll_gap1%>%
+  broom::augment()%>%
+  ggplot(aes(x=.fitted, y=.std.resid)) +
+  geom_point() +
+  geom_hline(aes(yintercept=0),linetype=2)+
+  theme_bw()+
+  ylab("Residuals") +
+  xlab("Fitted Values")
 
-m.col.m <- data_frame(yfit = m.col.m$fitted.values, res = m.col.m$residuals)
-ggplot(m.col.m, aes(x=yfit, y=res)) +
-  geom_point() 
+pdf("college_gap_m1.pdf")
+fit_coll_gap1.plot
+dev.off()
+
+#Regression model for gap wiht quadratic term
+fit_coll_gap2 <- lm(gap ~ par_pctile + par_pctile2, college)
+fit_coll_gap2.plot <- 
+fit_coll_gap2%>%
+  broom::augment()%>%
+  ggplot(aes(x=.fitted, y=.std.resid)) +
+  geom_point() +
+  geom_hline(aes(yintercept=0),linetype=2)+
+  theme_bw()+
+  ylab("Residuals") +
+  xlab("Fitted Values")
+
+pdf("college_gap_m2.pdf")
+fit_coll_gap2.plot
+dev.off()
+
+#F-test to select a model
+anova(fit_coll_gap1,fit_coll_gap2)
+
+#Fit regression line from M2
+fit_coll_gap2_line.plot<-
+fit_coll_gap2%>%
+  broom::augment()%>%
+  ggplot(
+    aes(x = par_pctile)) +
+  geom_line(aes(y = .fitted), size=2, color="blue") +
+  geom_point(aes(y = gap)) +
+  theme_bw() +
+  xlab("Parent Household Income Percentile") +
+  ylab("Percent Attended College (M-F)")
 
 
+pdf("college_gap_m2_fitted.pdf")
+fit_coll_gap2_line.plot
+dev.off()
 
-m.col.f <- lm(coll1823_f~par_pctile + I(par_pctile^2) , college)
-summary(m.col.f)
+col_gap2_res <- 
+  fit_coll_gap2%>%
+  broom::tidy()%>%
+  dplyr::rename(Variable=term, Estimate=estimate, Std = std.error, 
+                Statistic = statistic, Pvalue=p.value)
 
-m.col.f <- data_frame(yfit = m.col.f$fitted.values, res = m.col.f$residuals)
-ggplot(m.col.f, aes(x=yfit, y=res)) +
-  geom_point() 
+xtable(col_gap2_res)
 
-
-#################
-#################
-# Alternative Q3#
-
+summary(fit_coll_gap2)
 
 ####################
 #       Q4         #
@@ -310,14 +303,13 @@ fig1.add <- fig1%>%
   dplyr::select(`Male-Female`,Difference)
 
 fig1.plot <- 
-  ggplot(fig1.1, aes(x=par_pctile, y = round(100*value,0), group = sex)) +
-  geom_line(aes(color=sex)) +
+  ggplot(fig1.1, aes(x=par_pctile, y = round(100*value,2), group = sex)) +
   geom_point(aes(color=sex, shape=sex)) +
   theme_bw() +
   xlab("Parent Household Income Percentile") +
   ylab("Percent Employed") +
   theme(legend.position="bottom") +
-  scale_y_continuous(breaks = seq(30,70,10)) +
+  scale_y_continuous(breaks = seq(50,90,10)) +
   theme(legend.title=element_blank()) +
   annotation_custom(tableGrob(fig1.add, rows=NULL), xmin=75, xmax=100, ymin=60, ymax=70)
 
@@ -347,14 +339,13 @@ fig4c.add <- fig4c%>%
   dplyr::select(`Male-Female`,Difference)
 
 fig4c.plot <- 
-  ggplot(fig4c.1, aes(x=par_pctile, y = round(100*value,0), group = sex)) +
-  geom_line(aes(color=sex)) +
+  ggplot(fig4c.1, aes(x=par_pctile, y = round(100*value,2), group = sex)) +
   geom_point(aes(color=sex, shape=sex)) +
   theme_bw() +
   xlab("Parent Household Income Percentile") +
   ylab("Percent Attended College") +
   theme(legend.position="bottom") +
-  scale_y_continuous(breaks = seq(30,70,10)) +
+  scale_y_continuous(breaks = seq(20,100,10)) +
   theme(legend.title=element_blank()) +
   annotation_custom(tableGrob(fig4c.add, rows=NULL), xmin=75, xmax=100, ymin=30, ymax=50)
 
