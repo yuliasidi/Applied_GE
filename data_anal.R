@@ -5,6 +5,12 @@ library(tidyr)
 library(ggplot2)
 library(gridExtra)
 library(estimatr)
+library(mice)
+library(lattice)
+library(pan)
+library(miceadds)
+library(noncensus)
+
 
 gender_cz <- readxl::read_excel("gender_cz.xls")
 gender_nat <- readxl::read_excel("gender_nat.xls")
@@ -162,7 +168,7 @@ college <- gender_nat%>%
                 par_pctile2 = par_pctile^2)
 
 #Regression model for girls
-fit_coll_f <- lm(coll_f ~ par_pctile, college)
+fit_coll_f <- lm(coll_f ~ par_pctile + par_pctile2, college)
 fit_coll_f.plot <- fit_coll_f%>%
   broom::augment()%>%
   ggplot(aes(x=.fitted, y=.resid)) +
@@ -172,12 +178,12 @@ fit_coll_f.plot <- fit_coll_f%>%
   ylab("Residuals") +
   xlab("Fitted Values")
 
-pdf("college_rates_model1_f.pdf")
+pdf("college_rates_model_f.pdf")
 fit_coll_f.plot 
 dev.off()
 
 #Regression model for boys
-fit_coll_m <- lm(coll_m ~ par_pctile, college)
+fit_coll_m <- lm(coll_m ~ par_pctile + par_pctile2, college)
 fit_coll_m.plot <- fit_coll_m%>%
   broom::augment()%>%
   ggplot(aes(x=.fitted, y=.resid)) +
@@ -187,7 +193,7 @@ fit_coll_m.plot <- fit_coll_m%>%
   ylab("Residuals") +
   xlab("Fitted Values")
 
-pdf("college_rates_model1_m.pdf")
+pdf("college_rates_model_m.pdf")
 fit_coll_m.plot 
 dev.off()
 
@@ -209,7 +215,7 @@ fit_coll_gap1 <- lm(gap ~ par_pctile, college)
 fit_coll_gap1.plot <- 
 fit_coll_gap1%>%
   broom::augment()%>%
-  ggplot(aes(x=.fitted, y=.std.resid)) +
+  ggplot(aes(x=.fitted, y=.resid)) +
   geom_point() +
   geom_hline(aes(yintercept=0),linetype=2)+
   theme_bw()+
@@ -225,7 +231,7 @@ fit_coll_gap2 <- lm(gap ~ par_pctile + par_pctile2, college)
 fit_coll_gap2.plot <- 
 fit_coll_gap2%>%
   broom::augment()%>%
-  ggplot(aes(x=.fitted, y=.std.resid)) +
+  ggplot(aes(x=.fitted, y=.resid)) +
   geom_point() +
   geom_hline(aes(yintercept=0),linetype=2)+
   theme_bw()+
@@ -270,9 +276,215 @@ summary(fit_coll_gap2)
 #       Q4         #
 ####################
 
-eincome <- gender_cz%>%
-  dplyr::mutate(eincome.gap = e_rank_b_kir26_m_p25  - )
+income_e26 <- gender_cz%>%
+  dplyr::mutate(income_e26.gap = e_rank_b_kir26_m_p25  - e_rank_b_kir26_f_p25)
 
+data(states)
+
+income_e26 <- income_e26%>% 
+  dplyr::rename(state=stateabbrv)%>%
+  dplyr::left_join(states%>%
+                     dplyr::select(state,region),'state')
+
+region <- 
+  income_e26%>%
+  dplyr::group_by(region)%>%
+  dplyr::summarise(w.mean.m = weighted.mean(e_rank_b_kir26_m_p25,pop2000,na.rm = T),
+                   w.mean.f = weighted.mean(e_rank_b_kir26_f_p25,pop2000,na.rm = T),
+                   w.mean.gap = weighted.mean(income_e26.gap,pop2000,na.rm = T))
+  
+
+xtable::xtable(region)  
+
+###############################
+## Further Exploration for Q4 #
+###############################
+
+#Summarise # of missing
+income_e26%>%
+  dplyr::mutate(erankr_m = as.numeric(is.na(e_rank_b_kir26_m_p25)),
+                erankr_f = as.numeric(is.na(e_rank_b_kir26_f_p25)))%>%
+  dplyr::summarise(miss_m = mean(erankr_m),
+                   miss_f = mean(erankr_f))
+
+
+#########################################################
+### Use MICE to impute all missing values in the data ###
+#########################################################
+
+inc <- income_e26%>%
+  dplyr::select(state, region, pop2000,income_e26.gap,
+                e_rank_b_kir26_m_p25,e_rank_b_kir26_f_p25, cs00_seg_inc_pov25_st, cs_race_bla_st, cs_fam_wkidsinglemom_st,
+                ccd_pup_tch_ratio, crime_violent, cs_born_foreign,
+                cs_divorced, cs_elf_ind_man, cs_married, cs_race_theil_2000,
+                d_tradeusch_pw_1990, dropout_r, eitc_exposure, frac_traveltime_lt15,
+                frac_worked1416,gini, gradrate_r, hhinc00, inc_share_1perc,
+                mig_inflow, mig_outflow, num_inst_pc, rel_tot, scap_ski90pcm, 
+                score_r, tax_st_diff_top20, taxrate, tuition)%>%
+  mutate_at(dplyr::vars(ccd_pup_tch_ratio:tuition), dplyr::funs(scale(.)%>%as.numeric()))
+
+miss_n <- function(v){
+  round(100*mean(is.na(v)==T),1)
+}
+
+inc_missn <-
+  inc%>%
+  dplyr::summarize_at(vars(e_rank_b_kir26_m_p25:tuition),dplyr::funs(miss_n))
+
+inc_missn <- 
+  inc_missn%>%
+  dplyr::mutate(x=1)%>%
+  tidyr::gather(stat, value,-x)%>%
+  dplyr::select(-x)%>%
+  dplyr::arrange(desc(value))
+
+options("xtable.include.rownames"=FALSE)
+xtable::xtable(inc_missn)
+
+
+
+# define predictor matrix
+inc_mice <- inc%>%
+  dplyr::select(state, e_rank_b_kir26_m_p25,e_rank_b_kir26_f_p25, cs00_seg_inc_pov25_st, cs_race_bla_st, cs_fam_wkidsinglemom_st,
+                ccd_pup_tch_ratio, crime_violent, cs_born_foreign,
+                cs_divorced, cs_elf_ind_man, cs_married, cs_race_theil_2000,
+                d_tradeusch_pw_1990, dropout_r, eitc_exposure, frac_traveltime_lt15,
+                frac_worked1416,gini, gradrate_r, hhinc00, inc_share_1perc,
+                mig_inflow, mig_outflow, num_inst_pc, rel_tot, scap_ski90pcm, 
+                score_r, tax_st_diff_top20, taxrate, tuition)
+
+#plot missing pattern for mean income ranks
+rank_e.plot.miss <- md.pattern(inc_mice%>%
+             dplyr::select(e_rank_b_kir26_m_p25, e_rank_b_kir26_f_p25)%>%
+             dplyr::rename(Male = e_rank_b_kir26_m_p25, Female = e_rank_b_kir26_f_p25))
+
+
+#Imputation Model 1- use all of the covariates
+predM <- mice::make.predictorMatrix(data=inc_mice)
+predMnames1 <- names(inc_mice%>%
+                      dplyr::select(-state, -e_rank_b_kir26_m_p25))
+predMnames2 <- names(inc_mice%>%
+                       dplyr::select(-state, -e_rank_b_kir26_f_p25))
+# define cluster variable (type=-2)
+predM[, "state" ] <- -2
+# initialize with norm method
+impMethod <- mice::make.method(data=inc_mice)
+impMethod[ c("state")] <- ""
+# For use contextual effects for all imputations
+impMethod[ c("e_rank_b_kir26_m_p25p") ] <- "2l.contextual.pmm"
+predM[ c("e_rank_b_kir26_m_p25"), predMnames1] <- 2
+impMethod[ c("e_rank_b_kir26_f_p25p") ] <- "2l.contextual.pmm"
+predM[ c("e_rank_b_kir26_f_p25"), predMnames2] <- 2
+#define impMethod and predM for the rest of the covariates-extermnal pgm
+source("mice_covimp.R")
+
+#specify weights
+impWeights <- as.vector(inc$pop2000)
+
+# do imputation
+
+imp1 <- mice::mice(inc_mice, predictorMatrix=predM, m=10,  maxit=4, seed=45872,
+                  imputationMethod=impMethod,imputationWeights = impWeights, paniter=100)
+
+imp.list1 <- miceadds::mids2datlist( imp1 )
+# linear regression with cluster robust standard errors
+mod1 <- lapply(imp.list1, FUN=function(dt){
+  estimatr::lm_robust(e_rank_b_kir26_m_p25-e_rank_b_kir26_f_p25 ~ 
+                        cs_race_bla_st + cs00_seg_inc_pov25_st + cs_fam_wkidsinglemom_st,
+                      data=dt,
+                      cluster=inc_mice$state,
+                      weights = inc$pop2000, 
+                      fixed_effects =inc_mice$state,
+                      se_type = "stata")
+} )
+# extract parameters and covariance matrix
+betas1 <- lapply( mod1, FUN=function(rr){ coef(rr) } )
+vars1 <- lapply( mod1, FUN=function(rr){ vcov(rr) } )
+# conduct statistical inference
+imp.mice1 <- summary( miceadds::pool_mi( qhat=betas1, u=vars1 ) )
+
+
+#Imputation Model 2- use only the 3 covariates considered in the final model
+inc_mice2 <- inc_mice%>%
+  dplyr::select(state, e_rank_b_kir26_m_p25,e_rank_b_kir26_f_p25, 
+                cs00_seg_inc_pov25_st, cs_race_bla_st, cs_fam_wkidsinglemom_st)
+predM <- mice::make.predictorMatrix(data=inc_mice2)
+predMnames1 <- names(inc_mice2%>%
+                       dplyr::select(-state, -e_rank_b_kir26_m_p25))
+predMnames2 <- names(inc_mice2%>%
+                       dplyr::select(-state, -e_rank_b_kir26_f_p25))
+# define cluster variable (type=-2)
+predM[, "state" ] <- -2
+# initialize with norm method
+impMethod <- mice::make.method(data=inc_mice2)
+impMethod[ c("state")] <- ""
+# For use contextual effects for all imputations
+impMethod[ c("e_rank_b_kir26_m_p25p") ] <- "2l.contextual.pmm"
+predM[ c("e_rank_b_kir26_m_p25"), predMnames1] <- 2
+impMethod[ c("e_rank_b_kir26_f_p25p") ] <- "2l.contextual.pmm"
+predM[ c("e_rank_b_kir26_f_p25"), predMnames2] <- 2
+
+#specify weights
+impWeights <- as.vector(inc$pop2000)
+
+# do imputation
+
+imp2 <- mice::mice(inc_mice2, predictorMatrix=predM, m=10,  maxit=4, seed=115872,
+                   imputationMethod=impMethod,imputationWeights = impWeights, paniter=100)
+
+imp.list2 <- miceadds::mids2datlist( imp2 )
+# linear regression with cluster robust standard errors
+mod2 <- lapply(imp.list2, FUN=function(dt){
+  estimatr::lm_robust(e_rank_b_kir26_m_p25-e_rank_b_kir26_f_p25 ~ 
+                        cs_race_bla_st + cs00_seg_inc_pov25_st + cs_fam_wkidsinglemom_st,
+                      data=dt,
+                      cluster=inc_mice2$state,
+                      weights = inc$pop2000, 
+                      fixed_effects =inc_mice2$state,
+                      se_type = "stata")
+} )
+# extract parameters and covariance matrix
+betas2 <- lapply( mod2, FUN=function(rr){ coef(rr) } )
+vars2 <- lapply( mod2, FUN=function(rr){ vcov(rr) } )
+# conduct statistical inference
+imp.mice2 <- summary( miceadds::pool_mi( qhat=betas2, u=vars2 ) )
+
+saveRDS(imp.sum1,"DataSummaries/imp_sum_mice1.rds")
+saveRDS(imp.sum2,"DataSummaries/imp_sum_mice2.rds")
+
+
+#CCA analysis
+cca.rank.gap<-lm_robust(e_rank_b_kir26_m_p25-e_rank_b_kir26_f_p25 ~ cs_race_bla_st + cs00_seg_inc_pov25_st+
+                    cs_fam_wkidsinglemom_st, 
+                  data =  income_e26, 
+                  clusters = state_id, 
+                  fixed_effects = state_id,
+                  weights = pop2000, 
+                  se_type = "stata")
+
+summary(cca.rank.gap)
+saveRDS(cca.rank.gap,'DataSummaries/cca.rank.gap.RDS')
+
+#Check distibution of residuals
+#fit_coll_gap2.plot <- 
+cca.gap.value <- income_e26%>%
+  dplyr::filter(is.na(income_e26.gap)==F)%>%
+  dplyr::select(income_e26.gap)
+
+cca.rank.gap.fit <- data_frame(.fitted=cca.rank.gap$fitted.values,
+                               .resid=cca.gap.value$income_e26.gap-cca.rank.gap$fitted.values)
+
+cca.rank.gap.fit.plot <- cca.rank.gap.fit%>%
+  ggplot(aes(x=.fitted, y=.resid)) +
+  geom_point() +
+  geom_hline(aes(yintercept=0),linetype=2)+
+  theme_bw()+
+  ylab("Residuals") +
+  xlab("Fitted Values")
+
+pdf("AddResults/cca_rank_gap_fit.pdf")
+cca.rank.gap.fit.plot
+dev.off()
 
 
 

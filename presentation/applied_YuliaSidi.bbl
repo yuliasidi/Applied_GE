@@ -1,0 +1,25 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Chetty, Hendren, Kline, and Saez}{Chetty
+  et~al.}{2014}]{chetty2014land}
+Chetty, R., N.~Hendren, P.~Kline, and E.~Saez (2014).
+\newblock Where is the land of opportunity? the geography of intergenerational
+  mobility in the united states.
+\newblock {\em The Quarterly Journal of Economics\/}~{\em 129\/}(4),
+  1553--1623.
+
+\bibitem[\protect\citeauthoryear{Chetty, Hendren, Lin, Majerovitz, and
+  Scuderi}{Chetty et~al.}{2016}]{chetty2016childhood}
+Chetty, R., N.~Hendren, F.~Lin, J.~Majerovitz, and B.~Scuderi (2016).
+\newblock Childhood environment and gender gaps in adulthood.
+\newblock {\em American Economic Review\/}~{\em 106\/}(5), 282--88.
+
+\bibitem[\protect\citeauthoryear{Vink, Lazendic, and van Buuren}{Vink
+  et~al.}{2015}]{vink2015partioned}
+Vink, G., G.~Lazendic, and S.~van Buuren (2015).
+\newblock Partioned predictive mean matching as a large data multilevel
+  imputation technique.
+\newblock {\em Psychological Test and Assessment Modeling\/}~{\em 57\/}(4),
+  577--594.
+
+\end{thebibliography}

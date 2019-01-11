@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  6 JAN 2019 18:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  10 JAN 2019 21:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -670,23 +670,33 @@ LaTeX Info: Redefining \cite on input line 694.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/beamer/beamerinnerthemerounded.st
 y)
 (/usr/local/texlive/2018/texmf-dist/tex/latex/beamer/beamerouterthemeinfolines.
-sty)) (./applied_YuliaSidi.aux)
+sty))
+(/usr/local/texlive/2018/texmf-dist/tex/latex/beamer/beamerfontthemeprofessiona
+lfonts.sty) (/usr/local/texlive/2018/texmf-dist/tex/latex/oberdiek/grffile.sty
+Package: grffile 2017/06/30 v1.18 Extended file name support for graphics (HO)
+Package grffile Info: Option `multidot' is set to `true'.
+Package grffile Info: Option `extendedchars' is set to `false'.
+Package grffile Info: Option `space' is set to `true'.
+Package grffile Info: \Gin@ii of package `graphicx' fixed on input line 494.
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 18.
+(./applied_YuliaSidi.aux)
 \openout1 = `applied_YuliaSidi.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -754,7 +764,7 @@ e
 ))
 ABD: EveryShipout initializing macros
 \AtBeginShipoutBox=\box54
-Package hyperref Info: Link coloring OFF on input line 21.
+Package hyperref Info: Link coloring ON on input line 31.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
@@ -764,66 +774,14 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count162
 )
-LaTeX Info: Redefining \ref on input line 21.
-LaTeX Info: Redefining \pageref on input line 21.
-LaTeX Info: Redefining \nameref on input line 21.
+LaTeX Info: Redefining \ref on input line 31.
+LaTeX Info: Redefining \pageref on input line 31.
+LaTeX Info: Redefining \nameref on input line 31.
 
 (./applied_YuliaSidi.out) (./applied_YuliaSidi.out)
 \@outlinefile=\write5
 \openout5 = `applied_YuliaSidi.out'.
 
-LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 21.
-LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 21.
-\symnumbers=\mathgroup6
-\sympureletters=\mathgroup7
-LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 21.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 21.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 21.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 21.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 21.
-LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 21.
-LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmr/bx/n on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/bx/n on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 21.
-LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/bx/n on input line 21.
-LaTeX Font Info:    Redeclaring symbol font `pureletters' on input line 21.
-LaTeX Font Info:    Overwriting symbol font `pureletters' in version `normal'
-(Font)                  OT1/cmss/m/it --> OT1/mathkerncmss/m/sl on input line 2
-1.
-LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/cmss/bx/it --> OT1/mathkerncmss/m/sl on input line 
-21.
-LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/mathkerncmss/m/sl --> OT1/mathkerncmss/bx/sl on inp
-ut line 21.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/translator/translator-basic-dicti
 onary-English.dict
@@ -856,61 +814,142 @@ ied_YuliaSidi.toc) [2
 ]
 [3
 
-] (./applied_YuliaSidi.toc) [4
+] [4
+
+] (./applied_YuliaSidi.toc) [5
+
+] [6
+
+] [7
+
+] [8
+
+] (./applied_YuliaSidi.toc)
+[9
 
 ]
-<../fig2.pdf, id=158, 505.89pt x 505.89pt>
-File: ../fig2.pdf Graphic file (type pdf)
-<use ../fig2.pdf>
-Package pdftex.def Info: ../fig2.pdf  used on input line 65.
+<../fig1.pdf, id=319, 505.89pt x 505.89pt>
+File: ../fig1.pdf Graphic file (type pdf)
+<use ../fig1.pdf>
+Package pdftex.def Info: ../fig1.pdf  used on input line 138.
 (pdftex.def)             Requested size: 177.99501pt x 177.99817pt.
-LaTeX Font Info:    Try loading font information for U+msa on input line 65.
-
-(/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
+LaTeX Font Info:    Try loading font information for U+msa on input line 138.
+ (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 65.
+LaTeX Font Info:    Try loading font information for U+msb on input line 138.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-LaTeX Font Info:    Try loading font information for OT1+mathkerncmss on input 
-line 65.
+) [10
 
-(/usr/local/texlive/2018/texmf-dist/tex/latex/sansmathaccent/ot1mathkerncmss.fd
-File: ot1mathkerncmss.fd 2013/03/27 Fontinst v1.933 font definitions for OT1/ma
-thkerncmss.
-)
-Overfull \vbox (6.70122pt too high) detected at line 65
+ <../fig1.pdf>]
+<../fig4b.pdf, id=354, 505.89pt x 505.89pt>
+File: ../fig4b.pdf Graphic file (type pdf)
+<use ../fig4b.pdf>
+Package pdftex.def Info: ../fig4b.pdf  used on input line 162.
+(pdftex.def)             Requested size: 177.99501pt x 177.99817pt.
+ [11
+
+ <../fig4b.pdf>]
+<../fig4c.pdf, id=389, 505.89pt x 505.89pt>
+File: ../fig4c.pdf Graphic file (type pdf)
+<use ../fig4c.pdf>
+Package pdftex.def Info: ../fig4c.pdf  used on input line 185.
+(pdftex.def)             Requested size: 177.99501pt x 177.99817pt.
+ [12
+
+ <../fig4c.pdf>]
+<../college_gap.pdf, id=423, 505.89pt x 505.89pt>
+File: ../college_gap.pdf Graphic file (type pdf)
+<use ../college_gap.pdf>
+Package pdftex.def Info: ../college_gap.pdf  used on input line 214.
+(pdftex.def)             Requested size: 136.91603pt x 136.91632pt.
+ [13
+
+ <../college_gap.pdf>]
+<../college_gap_m1.pdf, id=463, 505.89pt x 505.89pt>
+File: ../college_gap_m1.pdf Graphic file (type pdf)
+<use ../college_gap_m1.pdf>
+Package pdftex.def Info: ../college_gap_m1.pdf  used on input line 239.
+(pdftex.def)             Requested size: 136.91603pt x 136.91632pt.
+<../college_gap_m2.pdf, id=464, 505.89pt x 505.89pt>
+File: ../college_gap_m2.pdf Graphic file (type pdf)
+<use ../college_gap_m2.pdf>
+Package pdftex.def Info: ../college_gap_m2.pdf  used on input line 239.
+(pdftex.def)             Requested size: 136.91603pt x 136.91632pt.
+ [14
+
+ <../college_gap_m1.pdf> <../college_gap_m2.pdf>]
+<../college_gap_m2_fitted.pdf, id=503, 505.89pt x 505.89pt>
+File: ../college_gap_m2_fitted.pdf Graphic file (type pdf)
+<use ../college_gap_m2_fitted.pdf>
+Package pdftex.def Info: ../college_gap_m2_fitted.pdf  used on input line 265.
+(pdftex.def)             Requested size: 113.81102pt x 113.80489pt.
+
+Overfull \vbox (6.53424pt too high) detected at line 265
  []
 
-[5
+[15
+
+ <../college_gap_m2_fitted.pdf>] [16
+
+]
+<../fig2.pdf, id=563, 505.89pt x 505.89pt>
+File: ../fig2.pdf Graphic file (type pdf)
+<use ../fig2.pdf>
+Package pdftex.def Info: ../fig2.pdf  used on input line 303.
+(pdftex.def)             Requested size: 177.99501pt x 177.99817pt.
+
+Overfull \vbox (6.70122pt too high) detected at line 303
+ []
+
+[17
 
  <../fig2.pdf>]
-<../fig2_new.pdf, id=191, 505.89pt x 505.89pt>
+<../fig2_new.pdf, id=597, 505.89pt x 505.89pt>
 File: ../fig2_new.pdf Graphic file (type pdf)
 <use ../fig2_new.pdf>
-Package pdftex.def Info: ../fig2_new.pdf  used on input line 90.
+Package pdftex.def Info: ../fig2_new.pdf  used on input line 328.
 (pdftex.def)             Requested size: 177.99501pt x 177.99817pt.
 
-Overfull \vbox (8.25677pt too high) detected at line 90
+Overfull \vbox (6.70122pt too high) detected at line 328
  []
 
-[6
+[18
 
  <../fig2_new.pdf>]
-<../fig_ys.pdf, id=223, 505.89pt x 505.89pt>
+<../fig_ys.pdf, id=630, 505.89pt x 505.89pt>
 File: ../fig_ys.pdf Graphic file (type pdf)
 <use ../fig_ys.pdf>
-Package pdftex.def Info: ../fig_ys.pdf  used on input line 114.
+Package pdftex.def Info: ../fig_ys.pdf  used on input line 352.
 (pdftex.def)             Requested size: 177.99501pt x 177.99817pt.
 
-Overfull \vbox (8.70122pt too high) detected at line 114
+Overfull \vbox (8.70122pt too high) detected at line 352
  []
 
-[7
+[19
 
- <../fig_ys.pdf>] [8
+ <../fig_ys.pdf>] [20
+
+] [21
+
+] [22
+
+] [23
+
+] [24
+
+] (./applied_YuliaSidi.bbl
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\translate ' on input line 1.
+
+) [25
+
+] [26
+
+] [27
 
 ]
 \tf@nav=\write6
@@ -922,31 +961,42 @@ Overfull \vbox (8.70122pt too high) detected at line 114
 \tf@snm=\write8
 \openout8 = `applied_YuliaSidi.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 122.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 122.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 492.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 492.
  (./applied_YuliaSidi.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 122.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 122.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 492.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 492.
 Package rerunfilecheck Info: File `applied_YuliaSidi.out' has not changed.
-(rerunfilecheck)             Checksum: DC1A16EBD1129A47B5A431CA38CAE7C1;149.
+(rerunfilecheck)             Checksum: 0D33C903408F077D2A88018735443A93;334.
  ) 
 Here is how much of TeX's memory you used:
- 17417 strings out of 492649
- 332735 string characters out of 6129622
- 406307 words of memory out of 5000000
- 20883 multiletter control sequences out of 15000+600000
- 11307 words of font info for 41 fonts, out of 8000000 for 9000
+ 17647 strings out of 492649
+ 336822 string characters out of 6129622
+ 413195 words of memory out of 5000000
+ 21057 multiletter control sequences out of 15000+600000
+ 13859 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 56i,15n,65p,803b,645s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb
-></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb>
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss17.pfb><
-/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></u
-sr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb>
-Output written on applied_YuliaSidi.pdf (8 pages, 83479 bytes).
+ 56i,15n,65p,803b,839s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><
+/usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></u
+sr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr
+/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/l
+ocal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/loca
+l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/t
+exlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/local/te
+xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/local/tex
+live/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss17.pfb></usr/local/texl
+ive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texliv
+e/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/local/texlive/
+2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/local/texlive
+/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/local/texlive/
+2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2
+018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb>
+Output written on applied_YuliaSidi.pdf (27 pages, 283238 bytes).
 PDF statistics:
- 309 PDF objects out of 1000 (max. 8388607)
- 271 compressed objects within 3 object streams
- 20 named destinations out of 1000 (max. 500000)
- 124 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 949 PDF objects out of 1000 (max. 8388607)
+ 860 compressed objects within 9 object streams
+ 64 named destinations out of 1000 (max. 500000)
+ 189 words of extra memory for PDF output out of 10000 (max. 10000000)
 
