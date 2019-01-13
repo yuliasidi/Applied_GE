@@ -350,7 +350,7 @@ fit_coll_gap3.qqplot <- fit_gaussian%>%
 p1 <- (fit_coll_gap3_line.plot + 
          fit_coll_gap3.plot + 
          fit_coll_gap3.qqplot)
-pdf("college_gap_m3_all.pdf")
+pdf("college_gap_m3_all.pdf",width = 10,height = 5)
 p1
 dev.off()
 
