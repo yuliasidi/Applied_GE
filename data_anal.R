@@ -10,6 +10,9 @@ library(lattice)
 library(pan)
 library(miceadds)
 library(noncensus)
+library(nlme)
+library(patchwork)
+
 
 
 gender_cz <- readxl::read_excel("gender_cz.xls")
@@ -182,6 +185,7 @@ pdf("college_rates_model_f.pdf")
 fit_coll_f.plot 
 dev.off()
 
+
 #Regression model for boys
 fit_coll_m <- lm(coll_m ~ par_pctile + par_pctile2, college)
 fit_coll_m.plot <- fit_coll_m%>%
@@ -226,6 +230,17 @@ pdf("college_gap_m1.pdf")
 fit_coll_gap1.plot
 dev.off()
 
+fit_coll_gap1.qqplot <- fit_coll_gap1%>%
+  broom::augment()%>%
+  ggplot(aes(sample=.fitted)) +
+  stat_qq() +
+  stat_qq_line()+
+  theme_bw()
+
+pdf("college_gap_m1_qq.pdf")
+fit_coll_gap1.qqplot 
+dev.off()
+
 #Regression model for gap wiht quadratic term
 fit_coll_gap2 <- lm(gap ~ par_pctile + par_pctile2, college)
 fit_coll_gap2.plot <- 
@@ -241,6 +256,26 @@ fit_coll_gap2%>%
 pdf("college_gap_m2.pdf")
 fit_coll_gap2.plot
 dev.off()
+
+fit_coll_gap2.qqplot <- fit_coll_gap2%>%
+  broom::augment()%>%
+  ggplot(aes(sample=.fitted)) +
+  stat_qq() +
+  stat_qq_line()+
+  theme_bw()
+
+pdf("college_gap_m1_qq.pdf")
+fit_coll_gap2.qqplot 
+dev.off()
+
+#organize picture with fitted/residuals and qq-plot in one figure
+p <- (fit_coll_gap1.plot + fit_coll_gap2.plot)/
+  (fit_coll_gap1.qqplot + fit_coll_gap2.qqplot)
+
+pdf("college_gap_models12.pdf")
+p 
+dev.off()
+
 
 #F-test to select a model
 anova(fit_coll_gap1,fit_coll_gap2)
@@ -272,6 +307,63 @@ xtable(col_gap2_res)
 
 summary(fit_coll_gap2)
 
+
+### Rate of change model
+x <- college%>%
+  dplyr::mutate(
+    gap_pct = 100*(gap - lag(gap,1))/lag(gap,1)
+  )%>%
+  dplyr::filter(!par_pctile%in%c(1,100))
+
+x%>%
+  ggplot(aes(x=par_pctile,y=gap_pct)) + geom_point()
+
+fit_gaussian <- lm(gap_pct ~ par_pctile + par_pctile2, data=x)
+
+fit_coll_gap3.plot <- fit_gaussian%>%
+  broom::augment()%>%
+  ggplot(aes(x=.fitted, y=.resid)) +
+  geom_point() +
+  geom_hline(aes(yintercept=0),linetype=2)+
+  theme_bw()+
+  ylab("Residuals") +
+  xlab("Fitted Values")
+
+
+fit_coll_gap3_line.plot <- fit_gaussian%>%
+  broom::augment()%>%
+  ggplot(
+    aes(x = par_pctile)) +
+  geom_line(aes(y = .fitted), size=2, color="blue") +
+  geom_point(aes(y = gap_pct)) +
+  theme_bw() +
+  xlab("Parent Household Income Percentile") +
+  ylab("Percent Change in College Attendence Rate Gap (M-F)")
+
+fit_coll_gap3.qqplot <- fit_gaussian%>%
+  broom::augment()%>%
+  ggplot(aes(sample = .resid)) +
+  stat_qq() +
+  stat_qq_line() +
+  theme_bw()
+
+p1 <- (fit_coll_gap3_line.plot + 
+         fit_coll_gap3.plot + 
+         fit_coll_gap3.qqplot)
+pdf("college_gap_m3_all.pdf")
+p1
+dev.off()
+
+col_gap3_res <- 
+  fit_gaussian%>%
+  broom::tidy()%>%
+  dplyr::rename(Variable=term, Estimate=estimate, Std = std.error, 
+                Statistic = statistic, Pvalue=p.value)
+
+xtable::xtable(col_gap3_res)
+
+summary(fit_gaussian)
+
 ####################
 #       Q4         #
 ####################
@@ -297,7 +389,7 @@ region <-
 xtable::xtable(region)  
 
 ###############################
-## Further Exploration for Q4 #
+  ## Further Exploration for Q4 #
 ###############################
 
 #Summarise # of missing
@@ -307,6 +399,24 @@ income_e26%>%
   dplyr::summarise(miss_m = mean(erankr_m),
                    miss_f = mean(erankr_f))
 
+income_e26 <- 
+  income_e26%>%
+  dplyr::mutate(regionf = as.factor(region))
+
+tmp <-income_e26%>%
+  dplyr::select(income_e26.gap, region, regionf, state_id,pop2000)%>%
+  dplyr::mutate(MvsN = ifelse(region=="Midwest",1,0),
+                SvsN = ifelse(region=="South",1,0),
+                WvsN = ifelse(region=="West",1,0)
+                )
+regionm.sum <- summary(lm_robust(income_e26.gap ~ MvsN + SvsN + WvsN, 
+                  data =  tmp, 
+                  clusters = state_id, 
+                  # fixed_effects = state_id,
+                  weights = pop2000, 
+                  se_type = "stata"))
+
+saveRDS(regionm.sum,"DataSummaries/regionm.sum.RDS")
 
 #########################################################
 ### Use MICE to impute all missing values in the data ###
@@ -383,7 +493,7 @@ impWeights <- as.vector(inc$pop2000)
 
 # do imputation
 
-imp1 <- mice::mice(inc_mice, predictorMatrix=predM, m=10,  maxit=4, seed=45872,
+imp1 <- mice::mice(inc_mice, predictorMatrix=predM, m=10,  maxit=20, seed=45872,
                   imputationMethod=impMethod,imputationWeights = impWeights, paniter=100)
 
 imp.list1 <- miceadds::mids2datlist( imp1 )
@@ -408,29 +518,29 @@ imp.mice1 <- summary( miceadds::pool_mi( qhat=betas1, u=vars1 ) )
 inc_mice2 <- inc_mice%>%
   dplyr::select(state, e_rank_b_kir26_m_p25,e_rank_b_kir26_f_p25, 
                 cs00_seg_inc_pov25_st, cs_race_bla_st, cs_fam_wkidsinglemom_st)
-predM <- mice::make.predictorMatrix(data=inc_mice2)
-predMnames1 <- names(inc_mice2%>%
+predM2 <- mice::make.predictorMatrix(data=inc_mice2)
+predMnames21 <- names(inc_mice2%>%
                        dplyr::select(-state, -e_rank_b_kir26_m_p25))
-predMnames2 <- names(inc_mice2%>%
+predMnames22 <- names(inc_mice2%>%
                        dplyr::select(-state, -e_rank_b_kir26_f_p25))
 # define cluster variable (type=-2)
-predM[, "state" ] <- -2
+predM2[, "state" ] <- -2
 # initialize with norm method
-impMethod <- mice::make.method(data=inc_mice2)
-impMethod[ c("state")] <- ""
+impMethod2 <- mice::make.method(data=inc_mice2)
+impMethod2[ c("state")] <- ""
 # For use contextual effects for all imputations
-impMethod[ c("e_rank_b_kir26_m_p25p") ] <- "2l.contextual.pmm"
-predM[ c("e_rank_b_kir26_m_p25"), predMnames1] <- 2
-impMethod[ c("e_rank_b_kir26_f_p25p") ] <- "2l.contextual.pmm"
-predM[ c("e_rank_b_kir26_f_p25"), predMnames2] <- 2
+impMethod2[ c("e_rank_b_kir26_m_p25p") ] <- "2l.contextual.pmm"
+predM2[ c("e_rank_b_kir26_m_p25"), predMnames21] <- 2
+impMethod2[ c("e_rank_b_kir26_f_p25p") ] <- "2l.contextual.pmm"
+predM[ c("e_rank_b_kir26_f_p25"), predMnames22] <- 2
 
 #specify weights
 impWeights <- as.vector(inc$pop2000)
 
 # do imputation
 
-imp2 <- mice::mice(inc_mice2, predictorMatrix=predM, m=10,  maxit=4, seed=115872,
-                   imputationMethod=impMethod,imputationWeights = impWeights, paniter=100)
+imp2 <- mice::mice(inc_mice2, predictorMatrix=predM2, m=10,  maxit=20, seed=115872,
+                   imputationMethod=impMethod2,imputationWeights = impWeights, paniter=100)
 
 imp.list2 <- miceadds::mids2datlist( imp2 )
 # linear regression with cluster robust standard errors
@@ -449,8 +559,8 @@ vars2 <- lapply( mod2, FUN=function(rr){ vcov(rr) } )
 # conduct statistical inference
 imp.mice2 <- summary( miceadds::pool_mi( qhat=betas2, u=vars2 ) )
 
-saveRDS(imp.sum1,"DataSummaries/imp_sum_mice1.rds")
-saveRDS(imp.sum2,"DataSummaries/imp_sum_mice2.rds")
+saveRDS(imp.mice1,"DataSummaries/imp_sum_mice1.rds")
+saveRDS(imp.mice2,"DataSummaries/imp_sum_mice2.rds")
 
 
 #CCA analysis
@@ -487,8 +597,120 @@ cca.rank.gap.fit.plot
 dev.off()
 
 
+###########################################
+### Corr bettweein cov and gap outcome ####
+###########################################
+
+w2_gap <- gender_cz%>%
+  dplyr::select(cz, state_id, pop2000, 
+                w2_pos_30_q1_m, w2_pos_30_q1_f, cs_race_bla_st,
+                cs00_seg_inc_pov25_st, cs_fam_wkidsinglemom_st,
+                ccd_pup_tch_ratio, crime_violent, cs_born_foreign,
+                cs_divorced, cs_elf_ind_man, cs_married, cs_race_theil_2000,
+                d_tradeusch_pw_1990, dropout_r, eitc_exposure, frac_traveltime_lt15,
+                frac_worked1416,gini, gradrate_r, hhinc00, inc_share_1perc,
+                mig_inflow, mig_outflow, num_inst_pc, rel_tot, scap_ski90pcm, 
+                score_r, tax_st_diff_top20, taxrate, tuition)%>%
+  mutate_at(dplyr::vars(ccd_pup_tch_ratio:tuition), 
+            dplyr::funs(scale(.)%>%as.numeric()))%>%
+  dplyr::mutate(w2.gap= 100*(w2_pos_30_q1_m - w2_pos_30_q1_f))
 
 
+
+cov.gap <- as.list(names(w2_gap)[6:33])
+
+eval.univ.corr <- function(cov1){
+  m <- lm_robust(as.formula(sprintf("w2.gap~%s",cov1)), 
+            data = w2_gap, 
+            clusters = state_id, 
+            weights = pop2000, 
+            se_type = "stata") 
+  return(m%>%tidy())
+}
+
+univ.res <- purrr::map(cov.gap, eval.univ.corr)
+
+univ.res.coef <- 
+  purrr::map_df(univ.res, .f = function(df){
+  df%>%
+    dplyr::slice(2)%>%
+    dplyr::select(term, estimate, std.error, conf.low, conf.high)
+})%>%
+  dplyr::mutate(cov.ind = case_when(term=="cs_race_bla_st" ~ 1,
+                                  term=="cs_race_theil_2000" ~ 2,
+                                  term=="cs00_seg_inc_pov25_st" ~ 3,
+                                  term=="frac_traveltime_lt15"~4,
+                                  term=="hhinc00"~5,
+                                  term=="gini" ~ 6,
+                                  term=="inc_share_1perc" ~ 7,
+                                  term=="ccd_pup_tch_ratio" ~ 8,
+                                  term=="score_r" ~ 9,
+                                  term=="dropout_r" ~ 10,
+                                  term=="scap_ski90pcm" ~ 11,
+                                  term=="rel_tot" ~ 12,
+                                  term=="crime_violent" ~ 13,
+                                  term=="cs_fam_wkidsinglemom_st" ~ 14,
+                                  term=="cs_divorced" ~ 15,
+                                  term=="cs_married" ~ 16,
+                                  term=="taxrate" ~ 17,
+                                  term=="eitc_exposure" ~ 18,
+                                  term=="tax_st_diff_top20" ~ 19,
+                                  term=="num_inst_pc" ~ 20,
+                                  term=="tuition" ~ 21,
+                                  term=="gradrate_r" ~ 22,
+                                  term=="cs_elf_ind_man" ~ 23,
+                                  term=="d_tradeusch_pw_1990" ~ 24,
+                                  term=="frac_worked1416" ~ 25,
+                                  term=="mig_inflow" ~ 26,
+                                  term=="mig_outflow" ~ 27,
+                                  term=="cs_born_foreign" ~ 28))
+
+apptable2 <- readRDS('apptable2.RDS')
+
+apptable2 <- apptable2%>%
+  dplyr::mutate(cov.ind = seq(1,28,1))
+
+
+comp.corr <- univ.res.coef%>%
+  dplyr::left_join(apptable2, by = 'cov.ind')
+
+comp.corr1 <- comp.corr%>%
+  dplyr::select(variable,
+                paper_coef = full_sample_coef,
+                paper_se = full_sample_se,
+                test_coef = estimate, 
+                test_se = std.error)
+
+comp.corr2 <- comp.corr1%>%
+  dplyr::mutate(covid = sprintf('%02d',1:n()))%>%
+  tidyr::gather(stat,value,-c(covid,variable))%>%
+  tidyr::separate(stat,c('source','stat'),sep='\\_')%>%
+  tidyr::spread(stat,value)%>%
+  tidyr::unite('plot_variable',c('covid','variable','source'),remove=FALSE)%>%
+  dplyr::arrange(variable)%>%
+  dplyr::mutate(plot_variable_label = dplyr::if_else(
+    source == 'test',gsub('^(.*?)_|_test$','',plot_variable),'')
+  )
+
+comp.corr.plot <- comp.corr2%>%
+  ggplot(aes(x=coef,y=plot_variable,shape=source,colour=variable)) + 
+  geom_point() +
+  geom_errorbarh(aes(xmin = coef-se,xmax=coef+se)) +
+  geom_vline(aes(xintercept = 0),linetype=2) +
+  scale_y_discrete(labels = comp.corr2$plot_variable_label) +
+  scale_color_discrete(guide=FALSE) +
+  scale_shape_discrete(labels = c('original','reproduced')) +
+  labs(
+    x = 'Coefficient',
+    y = '',
+    shape = ''
+  ) +
+  theme_bw() +
+  theme(legend.position = 'bottom')
+
+pdf("univ_corr_comparison.pdf")
+comp.corr.plot
+dev.off()
 
 ######################
 # Not required by HB #
